@@ -30,34 +30,35 @@ int crear(const char* package_name){
     }
 
     fclose(archivo);
+    
+    //Lectura de archivo
+    // printf("Archivo de bytes creado y escrito.\n");
 
-    printf("Archivo de bytes creado y escrito.\n");
+    // // Leer la estructura desde el archivo
+    // struct File archivo_leido;
 
-    // Leer la estructura desde el archivo
-    struct File archivo_leido;
+    // archivo = fopen("file_data.bin", "rb"); // Abrir el archivo en modo lectura binaria
 
-    archivo = fopen("file_data.bin", "rb"); // Abrir el archivo en modo lectura binaria
+    // if (archivo == NULL) {
+    //     perror("Error al abrir el archivo para lectura");
+    //     return 1;
+    // }
 
-    if (archivo == NULL) {
-        perror("Error al abrir el archivo para lectura");
-        return 1;
-    }
+    // // Leer la estructura desde el archivo
+    // size_t leidos = fread(&archivo_leido, sizeof(struct File), 1, archivo);
 
-    // Leer la estructura desde el archivo
-    size_t leidos = fread(&archivo_leido, sizeof(struct File), 1, archivo);
+    // if (leidos != 1) {
+    //     perror("Error al leer el archivo");
+    //     fclose(archivo);
+    //     return 1;
+    // }
 
-    if (leidos != 1) {
-        perror("Error al leer el archivo");
-        fclose(archivo);
-        return 1;
-    }
+    // // Cerrar el archivo
+    // fclose(archivo);
 
-    // Cerrar el archivo
-    fclose(archivo);
-
-    // Imprimir los datos leídos
-    printf("Nombre: %s\n", archivo_leido.name);
-    printf("Tamaño: %lu\n", archivo_leido.size);
+    // // Imprimir los datos leídos
+    // printf("Nombre: %s\n", archivo_leido.name);
+    // printf("Tamaño: %lu\n", archivo_leido.size);
 
 }
 
