@@ -240,19 +240,10 @@ void delete(const char* package_name, const char* file_name){
         return;
     }
 
-    // Mover el puntero al inicio del archivo a borrar
-    fseek(archivo, empacado.files[indice_borrar].start, SEEK_SET);
-
-    // Eliminar el contenido del archivo del paquete
-    char buffer[1024];
-    size_t bytes_read;
-    while ((bytes_read = fread(buffer, 1, sizeof(buffer), archivo)) > 0) {
-        fseek(archivo, -bytes_read, SEEK_CUR);
-        fwrite(buffer, 1, bytes_read, archivo);
-        fseek(archivo, bytes_read, SEEK_CUR);
-    }
-
     // Actualizar el índice de archivos
+    for (size_t i = indice_borrar; i < empacado.file_count - 1; i++) {
+        empacado.files[i] = empacado.files[i + 1];
+    }
     empacado.file_count--;
 
     // Mover el puntero al inicio del paquete y escribir la información actualizada
@@ -260,8 +251,7 @@ void delete(const char* package_name, const char* file_name){
     fwrite(&empacado, sizeof(struct PackageInfo), 1, archivo);
 
     // Truncar el archivo para eliminar el espacio del archivo borrado
-    fseek(archivo, sizeof(struct PackageInfo) + empacado.files[indice_borrar].end, SEEK_SET);
-    long new_size = ftell(archivo);
+    long new_size = empacado.files[empacado.file_count - 1].end;
     fclose(archivo);
 
     FILE* truncated_file = fopen(package_name, "rb+");
@@ -332,7 +322,7 @@ int main(int argc, char *argv[]) {
 
     struct PackageInfo archivo;
 
-    const char* nombre = "prueba2.jaja";
+    const char* nombre = "prueba3.jaja";
 
     listar(&archivo, nombre);
 
