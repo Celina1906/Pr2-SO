@@ -1,0 +1,23 @@
+1011;Alemania
+1013;El Salvador
+1010;Panamá
+1018;Colombia
+1009;Canadá
+1012;Jamaica
+1017;Chile
+1020;India
+1007;Ecuador
+1015;Argentina
+1019;España
+1001;Costa Rica
+1014;Afganistán
+1004;Francia
+1008;USA
+1006;México
+1016;Brasil
+1005;Italia
+1003;Nicaragua
+1002;Honduras
+1007;REPETIDO
+1015;REPETIDO
+1019;REPETIDO

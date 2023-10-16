@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
+
 
 #define MAX_FILENAME_LENGTH 256
 
@@ -94,8 +96,6 @@ void crear(const char* package_name,  char** files, int file_count) {
     }
 }
 
-
-
 void recuperar_info(struct PackageInfo *empacado, const char* package_name){
     // Abrir el archivo en modo lectura binaria
     FILE *archivo = fopen(package_name, "rb");
@@ -131,7 +131,53 @@ void recuperar_info(struct PackageInfo *empacado, const char* package_name){
 
 void file(const char* package_name, char** files, int file_count){}
 
-void extraer(){}
+void extraer(struct PackageInfo *empacado, const char* package_name){
+    // Abrir el archivo empacado en modo lectura binaria
+    FILE *archivo = fopen(package_name, "rb");
+
+    if (archivo == NULL) {
+        perror("Error al abrir el archivo para lectura");
+        return;
+    }
+
+    // Leer la estructura desde el archivo
+    size_t leidos = fread(empacado, sizeof(struct PackageInfo), 1, archivo);
+
+    if (leidos != 1) {
+        perror("Error al leer el archivo");
+        fclose(archivo);
+        return;
+    }
+
+    // Ahora, puedes acceder a los datos de struct File dentro de struct package_info
+    for (size_t i = 0; i < empacado->file_count; i++) {
+        // Crear un nuevo archivo con el nombre del archivo extraído
+        FILE* extracted_file = fopen(empacado->files[i].name, "wb");
+        if (extracted_file == NULL) {
+            perror("Error al crear el archivo extraído");
+            fclose(archivo);
+            return;
+        }
+
+        // Mover el puntero del archivo empacado al inicio del archivo a extraer
+        fseek(archivo, empacado->files[i].start, SEEK_SET);
+
+        // Copiar el contenido del archivo empacado al archivo extraído
+        char buffer[1024];
+        size_t bytes_read;
+        while (bytes_read = fread(buffer, 1, sizeof(buffer), archivo) > 0) {
+            fwrite(buffer, 1, bytes_read, extracted_file);
+        }
+
+        // Cerrar el archivo extraído
+        fclose(extracted_file);
+    }
+
+    // Cerrar el archivo empacado
+    fclose(archivo);
+
+    printf("Archivos extraídos con éxito.\n");
+}
 
 void listar(struct PackageInfo *empacado, const char* package_name){
     // Abrir el archivo en modo lectura binaria
@@ -161,7 +207,69 @@ void listar(struct PackageInfo *empacado, const char* package_name){
     }
 }
 
-void delete(){}
+void delete(const char* package_name, const char* file_name){
+   // Abrir el archivo empacado en modo lectura/escritura binaria
+    FILE *archivo = fopen(package_name, "rb+");
+
+    if (archivo == NULL) {
+        perror("Error al abrir el archivo para lectura/escritura");
+        return;
+    }
+
+    struct PackageInfo empacado;
+    size_t leidos = fread(&empacado, sizeof(struct PackageInfo), 1, archivo);
+
+    if (leidos != 1) {
+        perror("Error al leer el archivo");
+        fclose(archivo);
+        return;
+    }
+
+    // Buscar el archivo a borrar
+    int indice_borrar = -1;
+    for (size_t i = 0; i < empacado.file_count; i++) {
+        if (strcmp(empacado.files[i].name, file_name) == 0) {
+            indice_borrar = i;
+            break;
+        }
+    }
+
+    if (indice_borrar == -1) {
+        printf("El archivo \"%s\" no existe en el paquete.\n", file_name);
+        fclose(archivo);
+        return;
+    }
+
+    // Mover el puntero al inicio del archivo a borrar
+    fseek(archivo, empacado.files[indice_borrar].start, SEEK_SET);
+
+    // Eliminar el contenido del archivo del paquete
+    char buffer[1024];
+    size_t bytes_read;
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), archivo)) > 0) {
+        fseek(archivo, -bytes_read, SEEK_CUR);
+        fwrite(buffer, 1, bytes_read, archivo);
+        fseek(archivo, bytes_read, SEEK_CUR);
+    }
+
+    // Actualizar el índice de archivos
+    empacado.file_count--;
+
+    // Mover el puntero al inicio del paquete y escribir la información actualizada
+    fseek(archivo, 0, SEEK_SET);
+    fwrite(&empacado, sizeof(struct PackageInfo), 1, archivo);
+
+    // Truncar el archivo para eliminar el espacio del archivo borrado
+    fseek(archivo, sizeof(struct PackageInfo) + empacado.files[indice_borrar].end, SEEK_SET);
+    long new_size = ftell(archivo);
+    fclose(archivo);
+
+    FILE* truncated_file = fopen(package_name, "rb+");
+    ftruncate(fileno(truncated_file), new_size);
+    fclose(truncated_file);
+
+    printf("El archivo \"%s\" ha sido eliminado del paquete.\n", file_name);
+}
 
 void actualizar(){}
 
@@ -172,7 +280,7 @@ void agregar(){}
 void desfragmentar(){}
 
 int main(int argc, char *argv[]) {
- if (argc < 3) {
+ /*if (argc < 3) {
         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
         return 1;
     }
@@ -220,13 +328,19 @@ int main(int argc, char *argv[]) {
             printf("La letra ingresada no es valida");
         }
         
-    }
+    }*/
 
-    // struct PackageInfo archivo;
+    struct PackageInfo archivo;
 
-    // const char* nombre = "hola.j2";
+    const char* nombre = "prueba2.jaja";
 
-    // listar(&archivo, nombre);
+    listar(&archivo, nombre);
+
+    //extraer(&archivo, nombre);
+
+    delete(nombre, "Paises.txt");
+
+    listar(&archivo, nombre);
 
 
     return 0;
