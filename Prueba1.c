@@ -76,7 +76,7 @@ void recuperar_info(struct Archive *empacado, const char* package_name){
     }
 }
 
-void file(const char* package_name, const char** files, int file_count){}
+void file(const char* package_name, char** files, int file_count){}
 
 void extraer(){}
 
@@ -93,7 +93,7 @@ void agregar(){}
 void desfragmentar(){}
 
 int main(int argc, char *argv[]) {
-    if (argc < 3) {
+  /* if (argc < 3) {
         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
         return 1;
     }
@@ -139,7 +139,13 @@ int main(int argc, char *argv[]) {
             printf("La letra ingresada no es valida");
         }
         
-    }
+    }*/
+
+    struct Archive archivo;
+
+    const char* nombre = "hola.jaja";
+
+    recuperar_info(&archivo, nombre);
 
 
     return 0;
