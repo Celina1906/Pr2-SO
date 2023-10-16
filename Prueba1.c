@@ -4,33 +4,42 @@
 
 #define MAX_FILENAME_LENGTH 256
 
+#define MAX_FILENAME_LENGTH 256
+#define MAX_FILE_COUNT 100
+
 struct File {
     char name[MAX_FILENAME_LENGTH];
     size_t size;
+    long start;
+    long end;
 };
 
-int crear(const char* package_name){
-    // Crear una estructura File y escribirla en un archivo binario
-    struct File archivo_escrito = {"miarchivo.txt", 1000};
+struct Archive {
+    struct File files[MAX_FILE_COUNT];
+    size_t file_count;
+};
 
-    FILE *archivo = fopen("file_data.jaja", "wb"); // Abrir el archivo en modo escritura binaria
+void crear(const char* package_name) {
+    FILE *archivo = fopen(package_name, "wb"); // Abrir el archivo en modo escritura binaria
 
     if (archivo == NULL) {
         perror("Error al abrir el archivo");
-        return 1;
+        return;
     }
 
-    // Escribir la estructura en el archivo
-    size_t escritos = fwrite(&archivo_escrito, sizeof(struct File), 1, archivo);
+    struct Archive archive;
+    archive.file_count = 0;
+    
+    // Escribir la estructura Archive en el archivo
+    size_t escritos = fwrite(&archive, sizeof(struct Archive), 1, archivo);
 
     if (escritos != 1) {
         perror("Error al escribir en el archivo");
-        fclose(archivo);
-        return 1;
     }
 
     fclose(archivo);
-    
+
+
     //Lectura de archivo
     // printf("Archivo de bytes creado y escrito.\n");
 
