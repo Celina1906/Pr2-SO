@@ -41,41 +41,42 @@ void crear(const char* package_name) {
 
     fclose(archivo);
 
-
-    //Lectura de archivo
-    // printf("Archivo de bytes creado y escrito.\n");
-
-    // // Leer la estructura desde el archivo
-    // struct File archivo_leido;
-
-    // archivo = fopen("file_data.bin", "rb"); // Abrir el archivo en modo lectura binaria
-
-    // if (archivo == NULL) {
-    //     perror("Error al abrir el archivo para lectura");
-    //     return 1;
-    // }
-
-    // // Leer la estructura desde el archivo
-    // size_t leidos = fread(&archivo_leido, sizeof(struct File), 1, archivo);
-
-    // if (leidos != 1) {
-    //     perror("Error al leer el archivo");
-    //     fclose(archivo);
-    //     return 1;
-    // }
-
-    // // Cerrar el archivo
-    // fclose(archivo);
-
-    // // Imprimir los datos leídos
-    // printf("Nombre: %s\n", archivo_leido.name);
-    // printf("Tamaño: %lu\n", archivo_leido.size);
-
 }
 
-void file(const char* package_name, const char** files, int file_count){
-    
+void recuperar_info(struct Archive *empacado, const char* package_name){
+    // Abrir el archivo en modo lectura binaria
+    FILE *archivo = fopen(package_name, "rb");
+
+    if (archivo == NULL) {
+        perror("Error al abrir el archivo para lectura");
+        return;
+    }
+
+    // Leer la estructura desde el archivo
+    size_t leidos = fread(empacado, sizeof(struct Archive), 1, archivo);
+
+    if (leidos != 1) {
+        perror("Error al leer el archivo");
+        fclose(archivo);
+        return;
+    }
+
+    // Cerrar el archivo
+    fclose(archivo);
+
+    // Imprimir los datos leídos
+    printf("Tamaño de archivo: %lu\n", empacado->file_count);
+
+    // Ahora, puedes acceder a los datos de struct File dentro de struct Archive
+    for (size_t i = 0; i < empacado->file_count; i++) {
+        printf("Nombre de archivo: %s\n", empacado->files[i].name);
+        printf("Tamaño: %lu\n", empacado->files[i].size);
+        printf("Inicio: %ld\n", empacado->files[i].start);
+        printf("Fin: %ld\n", empacado->files[i].end);
+    }
 }
+
+void file(const char* package_name, const char** files, int file_count){}
 
 void extraer(){}
 
