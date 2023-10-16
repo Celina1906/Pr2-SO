@@ -17,6 +17,8 @@ struct File {
 struct Archive {
     struct File files[MAX_FILE_COUNT];
     size_t file_count;
+    // conteo de espacios libres
+    // pos inicio y fin de los espacios
 };
 
 void crear(const char* package_name) {
@@ -71,6 +73,24 @@ void crear(const char* package_name) {
 
 }
 
+void file(const char* package_name, const char** files, int file_count){
+    
+}
+
+void extraer(){}
+
+void listar(){}
+
+void delete(){}
+
+void actualizar(){}
+
+void verbose(){}
+
+void agregar(){}
+
+void desfragmentar(){}
+
 int main(int argc, char *argv[]) {
     if (argc < 3) {
         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
@@ -106,6 +126,7 @@ int main(int argc, char *argv[]) {
         }
         else if(comando[i] == 'f'){
             printf("Opcion de comando: File \n");
+            file(package_name, &argv[3], argc - 3);
         }
         else if(comando[i] == 'r'){ //append
             printf("Opcion de comando: Append \n");
