@@ -20,8 +20,8 @@ struct File {
 struct PackageInfo {
     struct File files[MAX_FILE_COUNT];
     size_t file_count;
-    // conteo de espacios libres
-    // pos inicio y fin de los espacios
+    // conteo de espacios libres --> 0 // +1
+    // pos inicio y fin de los espacios --> (Size, inicia)
 };
 
 bool verbose_flag = false;
@@ -263,9 +263,61 @@ void delete(const char* package_name, const char* file_name){
 
 void actualizar(){}
 
+void agregar(const char* package_name, const char* file_name){
+//Agregar contenido de file en package al final del empacado
+    FILE* package = fopen(package_name, "rb+");
+    if (package == NULL) {
+        perror("No se pudo crear el archivo empacado");
+        exit(1);
+    }
+    struct PackageInfo empacado;
+    size_t leidos = fread(&empacado, sizeof(struct PackageInfo), 1, package);
 
+    if (leidos != 1) {
+        perror("Error al leer el archivo");
+        fclose(package);
+        return;
+    }
 
-void agregar(){}
+    FILE* file = fopen(file_name, "rb");
+    if (file == NULL) {
+        perror("No se pudo abrir el archivo");
+        exit(1);
+    }
+
+    struct File add_file; // Cada file a empacar lleva su struct
+    fseek(package, 0, SEEK_END);
+    add_file.start = ftell(package); // inicializa segun el current byte - 1. si va empezando es 0 sino se actualiza a ultima posicion
+    
+    fseek(file, 0, SEEK_END);
+    strncpy(add_file.name, file, MAX_FILENAME_LENGTH);//saco nombre
+    add_file.size = ftell(file);
+    add_file.end = add_file.start + ftell(file); 
+
+    rewind(file); // Reinicia el puntero del file
+
+    // Agregar el archivo a Package Info
+    empacado.files[empacado.file_count] = add_file;
+    empacado.file_count++;
+
+    //escritura al final de package
+    // Copiar el contenido del archivo al archivo empacado
+    char buffer[1024];
+    size_t bytes_read;
+    while (bytes_read = fread(buffer, 1, sizeof(buffer), file) > 0) {
+        fwrite(buffer, 1, bytes_read, package);
+    }
+    
+    fclose(file);
+
+    //Escribo contenido actualizado de package
+    // Vuelve al principio del archivo empacado para escribir la información de package_info
+    fseek(package, 0, SEEK_SET);
+    fwrite(&empacado, sizeof(struct PackageInfo), 1, package);
+    
+    fclose(package);
+
+}
 
 void desfragmentar(){}
 
