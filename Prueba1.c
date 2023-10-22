@@ -6,7 +6,7 @@
 
 
 #define MAX_FILENAME_LENGTH 256
-
+#define DATA_SIZE     8192    // Bloque de datos (8K)
 #define MAX_FILENAME_LENGTH 256
 #define MAX_FILE_COUNT 100
 
@@ -20,9 +20,17 @@ struct File {
 struct PackageInfo {
     struct File files[MAX_FILE_COUNT];
     size_t file_count;
+    int free_spaces;
     // conteo de espacios libres --> 0 // +1
     // pos inicio y fin de los espacios --> (Size, inicia)
 };
+
+struct Datos
+{
+    int num_data;
+    int data[DATA_SIZE];
+};
+
 
 bool verbose_flag = false;
 
@@ -48,6 +56,8 @@ void crear(const char* package_name,  char** files, int file_count) {
     package_info.file_count = 0; //inicializamos en 0 --> aumenta cuenta por cada file que se escriba en el paquete
     long current_byte = sizeof(struct PackageInfo);
 
+    int contador_datos = 0;
+
     for (int i = 0; i < file_count; i++) {
         FILE* file = fopen(files[i], "rb");
         if (file == NULL) {
@@ -71,15 +81,7 @@ void crear(const char* package_name,  char** files, int file_count) {
         package_info.files[package_info.file_count] = add_file;
         package_info.file_count++;
 
-        // Escribir la información del archivo en el archivo empacado
-        // fwrite(&add_file, sizeof(struct File), 1, package);
-
-        // Copiar el contenido del archivo al archivo empacado
-        char buffer[1024];
-        size_t bytes_read;
-        while (bytes_read = fread(buffer, 1, sizeof(buffer), file) > 0) {
-            fwrite(buffer, 1, bytes_read, package);
-        }
+        /*ESCRIBIR EL BLOQUE DE DATOS*/
         
         fclose(file);
     }
@@ -322,71 +324,71 @@ void agregar(const char* package_name, const char* file_name){
 void desfragmentar(){}
 
 int main(int argc, char *argv[]) {
-// if (argc < 3) {
-//         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
-//         return 1;
-//     }
+if (argc < 3) {
+        printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
+        return 1;
+    }
 
-//     const char* comando = argv[1];
-//     long int longitud_comando = strlen(comando)-1;
-//     const char* package_name = argv[2];
+    const char* comando = argv[1];
+    long int longitud_comando = strlen(comando)-1;
+    const char* package_name = argv[2];
     
-//     // argv[1][1]
-//     // printf("Comando: %c\n", comando[0]);
-//     // printf("Tam: %ld\n", longitud_comando);
-//     const char* archivos = argv[3];
-//     for (int i = 1; i <= longitud_comando; i++){
-//         if (comando[i] == 'c'){
-//             printf("Opcion de comando: Create \n");
-//             crear(package_name, &argv[3], argc - 3);
-//         }
-//         else if (comando[i] =='x'){
-//             printf("Opcion de comando: Extract \n");
-//         }
-//         else if(comando[i] == 't'){
-//             printf("Opcion de comando: List \n");
-//         }
-//         else if(comando[i] == 'd'){
-//             printf("Opcion de comando: Delete \n");
-//         }
-//         else if(comando[i] == 'u'){
-//             printf("Opcion de comando: Update \n");
-//         }
-//         else if(comando[i] == 'v'){
-//             printf("Opcion de comando: Verbose \n");
-//             verbose_flag = true;
-//         }
-//         else if(comando[i] == 'f'){
-//             printf("Opcion de comando: File \n");
-//             file(package_name, &argv[3], argc - 3);
-//         }
-//         else if(comando[i] == 'r'){ //append
-//             printf("Opcion de comando: Append \n");
-//         }
-//         else if(comando[i] == 'p'){
-//             printf("Opcion de comando: Pack \n");
-//         }
-//         else{
-//             printf("La letra ingresada no es valida");
-//         }
+    // argv[1][1]
+    // printf("Comando: %c\n", comando[0]);
+    // printf("Tam: %ld\n", longitud_comando);
+    const char* archivos = argv[3];
+    for (int i = 1; i <= longitud_comando; i++){
+        if (comando[i] == 'c'){
+            printf("Opcion de comando: Create \n");
+            crear(package_name, &argv[3], argc - 3);
+        }
+        else if (comando[i] =='x'){
+            printf("Opcion de comando: Extract \n");
+        }
+        else if(comando[i] == 't'){
+            printf("Opcion de comando: List \n");
+        }
+        else if(comando[i] == 'd'){
+            printf("Opcion de comando: Delete \n");
+        }
+        else if(comando[i] == 'u'){
+            printf("Opcion de comando: Update \n");
+        }
+        else if(comando[i] == 'v'){
+            printf("Opcion de comando: Verbose \n");
+            verbose_flag = true;
+        }
+        else if(comando[i] == 'f'){
+            printf("Opcion de comando: File \n");
+            file(package_name, &argv[3], argc - 3);
+        }
+        else if(comando[i] == 'r'){ //append
+            printf("Opcion de comando: Append \n");
+        }
+        else if(comando[i] == 'p'){
+            printf("Opcion de comando: Pack \n");
+        }
+        else{
+            printf("La letra ingresada no es valida");
+        }
         
-//     }
+    }
 
-    struct PackageInfo archivo;
+    // struct PackageInfo archivo;
 
-    const char* nombre = "prueba5.jaja";
+    // const char* nombre = "prueba5.jaja";
+
+    // // listar(&archivo, nombre);
+
+    // // //extraer(&archivo, nombre);
+
+    // // delete(nombre, "Paises.txt");
 
     // listar(&archivo, nombre);
 
-    // //extraer(&archivo, nombre);
+    // agregar(nombre,"Paises.txt" );
 
-    // delete(nombre, "Paises.txt");
-
-    listar(&archivo, nombre);
-
-    agregar(nombre,"Paises.txt" );
-
-    listar(&archivo, nombre);
+    // listar(&archivo, nombre);
 
     return 0;
 }
