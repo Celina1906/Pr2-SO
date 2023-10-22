@@ -290,7 +290,7 @@ void agregar(const char* package_name, const char* file_name){
     add_file.start = ftell(package); // inicializa segun el current byte - 1. si va empezando es 0 sino se actualiza a ultima posicion
     
     fseek(file, 0, SEEK_END);
-    strncpy(add_file.name, file, MAX_FILENAME_LENGTH);//saco nombre
+    strncpy(add_file.name, file_name, MAX_FILENAME_LENGTH);//saco nombre
     add_file.size = ftell(file);
     add_file.end = add_file.start + ftell(file); 
 
@@ -322,68 +322,71 @@ void agregar(const char* package_name, const char* file_name){
 void desfragmentar(){}
 
 int main(int argc, char *argv[]) {
- /*if (argc < 3) {
-        printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
-        return 1;
-    }
+// if (argc < 3) {
+//         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
+//         return 1;
+//     }
 
-    const char* comando = argv[1];
-    long int longitud_comando = strlen(comando)-1;
-    const char* package_name = argv[2];
+//     const char* comando = argv[1];
+//     long int longitud_comando = strlen(comando)-1;
+//     const char* package_name = argv[2];
     
-    // argv[1][1]
-    // printf("Comando: %c\n", comando[0]);
-    // printf("Tam: %ld\n", longitud_comando);
-    const char* archivos = argv[3];
-    for (int i = 1; i <= longitud_comando; i++){
-        if (comando[i] == 'c'){
-            printf("Opcion de comando: Create \n");
-            crear(package_name, &argv[3], argc - 3);
-        }
-        else if (comando[i] =='x'){
-            printf("Opcion de comando: Extract \n");
-        }
-        else if(comando[i] == 't'){
-            printf("Opcion de comando: List \n");
-        }
-        else if(comando[i] == 'd'){
-            printf("Opcion de comando: Delete \n");
-        }
-        else if(comando[i] == 'u'){
-            printf("Opcion de comando: Update \n");
-        }
-        else if(comando[i] == 'v'){
-            printf("Opcion de comando: Verbose \n");
-            verbose_flag = true;
-        }
-        else if(comando[i] == 'f'){
-            printf("Opcion de comando: File \n");
-            file(package_name, &argv[3], argc - 3);
-        }
-        else if(comando[i] == 'r'){ //append
-            printf("Opcion de comando: Append \n");
-        }
-        else if(comando[i] == 'p'){
-            printf("Opcion de comando: Pack \n");
-        }
-        else{
-            printf("La letra ingresada no es valida");
-        }
+//     // argv[1][1]
+//     // printf("Comando: %c\n", comando[0]);
+//     // printf("Tam: %ld\n", longitud_comando);
+//     const char* archivos = argv[3];
+//     for (int i = 1; i <= longitud_comando; i++){
+//         if (comando[i] == 'c'){
+//             printf("Opcion de comando: Create \n");
+//             crear(package_name, &argv[3], argc - 3);
+//         }
+//         else if (comando[i] =='x'){
+//             printf("Opcion de comando: Extract \n");
+//         }
+//         else if(comando[i] == 't'){
+//             printf("Opcion de comando: List \n");
+//         }
+//         else if(comando[i] == 'd'){
+//             printf("Opcion de comando: Delete \n");
+//         }
+//         else if(comando[i] == 'u'){
+//             printf("Opcion de comando: Update \n");
+//         }
+//         else if(comando[i] == 'v'){
+//             printf("Opcion de comando: Verbose \n");
+//             verbose_flag = true;
+//         }
+//         else if(comando[i] == 'f'){
+//             printf("Opcion de comando: File \n");
+//             file(package_name, &argv[3], argc - 3);
+//         }
+//         else if(comando[i] == 'r'){ //append
+//             printf("Opcion de comando: Append \n");
+//         }
+//         else if(comando[i] == 'p'){
+//             printf("Opcion de comando: Pack \n");
+//         }
+//         else{
+//             printf("La letra ingresada no es valida");
+//         }
         
-    }*/
+//     }
 
     struct PackageInfo archivo;
 
-    const char* nombre = "prueba3.jaja";
+    const char* nombre = "prueba5.jaja";
+
+    // listar(&archivo, nombre);
+
+    // //extraer(&archivo, nombre);
+
+    // delete(nombre, "Paises.txt");
 
     listar(&archivo, nombre);
 
-    //extraer(&archivo, nombre);
-
-    delete(nombre, "Paises.txt");
+    agregar(nombre,"Paises.txt" );
 
     listar(&archivo, nombre);
-
 
     return 0;
 }
