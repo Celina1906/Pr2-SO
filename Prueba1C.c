@@ -23,8 +23,19 @@ struct PackageInfo {
     // conteo de espacios libres --> 0 // +1
     // pos inicio y fin de los espacios --> (Size, inicia)
 };
-
+/* Globales*/
 bool verbose_flag = false;
+bool vverbose_flag = false;
+bool create_flag = false;
+bool delete_flag = false;
+bool list_flag = false;
+bool extract_flag = false;
+bool update_flag = false;
+bool append_flag = false;
+bool pack_flag = false;
+bool file_flag = false;
+
+/* Globales*/
 
 void verbose(char* reports[], int numReports) {
     for (int i = 0; i < numReports; i++) {
@@ -322,71 +333,133 @@ void agregar(const char* package_name, const char* file_name){
 void desfragmentar(){}
 
 int main(int argc, char *argv[]) {
-// if (argc < 3) {
-//         printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
-//         return 1;
-//     }
+if (argc < 3) {
+        printf("Uso: %s <comando> <archivoEmpacado> [archivos...]\n", argv[0]);
+        return 1;
+    }
 
-//     const char* comando = argv[1];
-//     long int longitud_comando = strlen(comando)-1;
-//     const char* package_name = argv[2];
-    
-//     // argv[1][1]
-//     // printf("Comando: %c\n", comando[0]);
-//     // printf("Tam: %ld\n", longitud_comando);
-//     const char* archivos = argv[3];
-//     for (int i = 1; i <= longitud_comando; i++){
-//         if (comando[i] == 'c'){
-//             printf("Opcion de comando: Create \n");
-//             crear(package_name, &argv[3], argc - 3);
-//         }
-//         else if (comando[i] =='x'){
-//             printf("Opcion de comando: Extract \n");
-//         }
-//         else if(comando[i] == 't'){
-//             printf("Opcion de comando: List \n");
-//         }
-//         else if(comando[i] == 'd'){
-//             printf("Opcion de comando: Delete \n");
-//         }
-//         else if(comando[i] == 'u'){
-//             printf("Opcion de comando: Update \n");
-//         }
-//         else if(comando[i] == 'v'){
-//             printf("Opcion de comando: Verbose \n");
-//             verbose_flag = true;
-//         }
-//         else if(comando[i] == 'f'){
-//             printf("Opcion de comando: File \n");
-//             file(package_name, &argv[3], argc - 3);
-//         }
-//         else if(comando[i] == 'r'){ //append
-//             printf("Opcion de comando: Append \n");
-//         }
-//         else if(comando[i] == 'p'){
-//             printf("Opcion de comando: Pack \n");
-//         }
-//         else{
-//             printf("La letra ingresada no es valida");
-//         }
+    const char* comando = argv[1];
+    long int longitud_comando = strlen(comando)-1;
+    const char* package_name = argv[2];
+
+    const char* archivos = argv[3];
+    for (int i = 1; i <= longitud_comando; i++){
+        if (comando[i] == 'c'){
+            printf("Opcion de comando: Create \n");
+            create_flag = true;
+            // crear(package_name, &argv[3], argc - 3);
+        }
+        else if (comando[i] =='x'){
+            printf("Opcion de comando: Extract \n");
+            extract_flag = true;
+        }
+        else if(comando[i] == 't'){
+            printf("Opcion de comando: List \n");
+            list_flag = true;
+        }
+        else if(comando[i] == 'd'){
+            printf("Opcion de comando: Delete \n");
+            delete_flag = true;
+        }
+        else if(comando[i] == 'u'){
+            printf("Opcion de comando: Update \n");
+            update_flag = true;
+        }
+        else if(comando[i] == 'v'){
+            printf("Opcion de comando: Verbose \n");
+            if(verbose_flag == true){
+                vverbose_flag = true;
+                verbose_flag = false;
+            }
+        }
+        else if(comando[i] == 'f'){
+            printf("Opcion de comando: File \n");
+            file_flag = true;
+            // file(package_name, &argv[3], argc - 3);
+        }
+        else if(comando[i] == 'r'){ //append
+            printf("Opcion de comando: Append \n");
+            append_flag = true;
+        }
+        else if(comando[i] == 'p'){
+            printf("Opcion de comando: Pack \n");
+            pack_flag = true;
+        }
+        else{
+            printf("La letra ingresada no es valida");
+        }
+        // Revisar que hay que hacer
+        if (create_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            crear(package_name, &argv[3], argc - 3);
+        }
         
-//     }
+        if (delete_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            delete(package_name, &argv[3]);
+        }
+        if (extract_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            struct PackageInfo archivo;
+            extraer(&archivo, package_name );
+        }
+        if (append_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            agregar(package_name, &argv[3]);
+        }
+        if (update_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            actualizar(package_name, &argv[3]);
+        }
+        if (list_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            struct PackageInfo archivo;
+            listar(&archivo, package_name);
+        }
+        if (pack_flag) {
+            if (!file_flag) {
+                printf("Es necesario especificar el archivo con el comando -f.\n");
+                return 0;
+            }
+            desfragmentar(package_name);
+        }
+        
+        
+    }
 
-    struct PackageInfo archivo;
+    // struct PackageInfo archivo;
 
-    const char* nombre = "prueba5.jaja";
+    // const char* nombre = "prueba5.jaja";
+
+    // // listar(&archivo, nombre);
+
+    // // //extraer(&archivo, nombre);
+
+    // // delete(nombre, "Paises.txt");
 
     // listar(&archivo, nombre);
 
-    // //extraer(&archivo, nombre);
+    // agregar(nombre,"Paises.txt" );
 
-    // delete(nombre, "Paises.txt");
-
-    listar(&archivo, nombre);
-
-    agregar(nombre,"Paises.txt" );
-
-    listar(&archivo, nombre);
+    // listar(&archivo, nombre);
 
     return 0;
 }

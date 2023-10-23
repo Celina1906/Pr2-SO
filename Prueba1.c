@@ -94,7 +94,7 @@ void crear(const char* package_name,  char** files, int file_count) {
     fseek(package, 0, SEEK_SET);
     fwrite(&package_info, sizeof(struct PackageInfo), 1, package);
     for (int i = 0; i < contador_datos; i++) {
-        fwrite(&data_blocks[i],sizeof(struct Datos), 1, package);
+        fwrite(&data_blocks,sizeof(struct Datos), 1, package);
     }
     fclose(package);
 
