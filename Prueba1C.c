@@ -37,18 +37,19 @@ bool file_flag = false;
 
 /* Globales*/
 
-void verbose(char* reports[], int numReports) {
-    for (int i = 0; i < numReports; i++) {
-        printf("%s\n", reports[i]);
+void verbose(char* frase, int tipo_frase) {
+    if(verbose_flag == true && tipo_frase == 1){
+        printf("%s\n",frase);
     }
+    if(vverbose_flag == true){
+        printf("%s\n",frase);
+    }
+    
 }
 
 void crear(const char* package_name,  char** files, int file_count) {
-    char* reports[3]; // Array de punteros a cadenas para informes
 
-    reports[0] = "Se creó el paquete de salida";
-    reports[1] = "Se escribieron los archivos siguientes:";
-    reports[2] = "Se terminó de escribir el paquete";
+    verbose("Inicia opcion de crear",1);
     FILE* package = fopen(package_name, "wb");
     if (package == NULL) {
         perror("No se pudo crear el archivo empacado");
@@ -58,7 +59,7 @@ void crear(const char* package_name,  char** files, int file_count) {
     struct PackageInfo package_info;
     package_info.file_count = 0; //inicializamos en 0 --> aumenta cuenta por cada file que se escriba en el paquete
     long current_byte = sizeof(struct PackageInfo);
-
+    
     for (int i = 0; i < file_count; i++) {
         FILE* file = fopen(files[i], "rb");
         if (file == NULL) {
@@ -100,11 +101,6 @@ void crear(const char* package_name,  char** files, int file_count) {
     fwrite(&package_info, sizeof(struct PackageInfo), 1, package);
     
     fclose(package);
-
-    if(verbose_flag){
-        int numReports = sizeof(reports) / sizeof(reports[0]);
-        verbose(reports, numReports);
-    }
 }
 
 void recuperar_info(struct PackageInfo *empacado, const char* package_name){
@@ -371,6 +367,7 @@ if (argc < 3) {
                 vverbose_flag = true;
                 verbose_flag = false;
             }
+            verbose_flag = true;
         }
         else if(comando[i] == 'f'){
             printf("Opcion de comando: File \n");
@@ -388,21 +385,25 @@ if (argc < 3) {
         else{
             printf("La letra ingresada no es valida");
         }
+    }
         // Revisar que hay que hacer
         if (create_flag) {
             if (!file_flag) {
                 printf("Es necesario especificar el archivo con el comando -f.\n");
                 return 0;
             }
-            crear(package_name, &argv[3], argc - 3);
+            else{
+                crear(package_name, &argv[3], argc - 3);
+            }
+            
         }
         
         if (delete_flag) {
-            if (!file_flag) {
+            if (file_flag == false) {
                 printf("Es necesario especificar el archivo con el comando -f.\n");
                 return 0;
             }
-            delete(package_name, &argv[3]);
+            //delete(package_name, argv[3]);
         }
         if (extract_flag) {
             if (!file_flag) {
@@ -417,14 +418,14 @@ if (argc < 3) {
                 printf("Es necesario especificar el archivo con el comando -f.\n");
                 return 0;
             }
-            agregar(package_name, &argv[3]);
+            //agregar(package_name, argv[3]);
         }
         if (update_flag) {
             if (!file_flag) {
                 printf("Es necesario especificar el archivo con el comando -f.\n");
                 return 0;
             }
-            actualizar(package_name, &argv[3]);
+            //actualizar(package_name, argv[3]);
         }
         if (list_flag) {
             if (!file_flag) {
@@ -439,11 +440,11 @@ if (argc < 3) {
                 printf("Es necesario especificar el archivo con el comando -f.\n");
                 return 0;
             }
-            desfragmentar(package_name);
+            //desfragmentar(package_name);
         }
         
         
-    }
+    
 
     // struct PackageInfo archivo;
 
