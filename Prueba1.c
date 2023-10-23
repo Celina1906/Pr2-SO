@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-
 #define MAX_FILENAME_LENGTH 256
 #define DATA_SIZE     8192    // Bloque de datos (8K)
 #define MAX_FILENAME_LENGTH 256
@@ -34,10 +33,14 @@ struct Datos
 
 bool verbose_flag = false;
 
-void verbose(char* reports[], int numReports) {
-    for (int i = 0; i < numReports; i++) {
-        printf("%s\n", reports[i]);
+void verbose(char* frase, int tipo_frase) {
+    if(verbose_flag == true && tipo_frase == 1){
+        printf("%s\n",frase);
     }
+    if(vverbose_flag == true){
+        printf("%s\n",frase);
+    }
+    
 }
 
 void crear(const char* package_name,  char** files, int file_count) {
