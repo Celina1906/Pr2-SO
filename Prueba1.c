@@ -55,7 +55,7 @@ void crear(const char* package_name,  char** files, int file_count) {
     struct PackageInfo package_info;
     package_info.file_count = 0; //inicializamos en 0 --> aumenta cuenta por cada file que se escriba en el paquete
     long current_byte = sizeof(struct PackageInfo);
-
+    struct Datos data_blocks[100];
     int contador_datos = 0;
 
     for (int i = 0; i < file_count; i++) {
@@ -82,14 +82,20 @@ void crear(const char* package_name,  char** files, int file_count) {
         package_info.file_count++;
 
         /*ESCRIBIR EL BLOQUE DE DATOS*/
-        
+        struct Datos bloque;
+        // bloque.num_data = contador_datos;
+        size_t bytesRead = fread(bloque.data, 1, DATA_SIZE, file);
+        data_blocks[contador_datos]=bloque;
+        contador_datos++;
         fclose(file);
     }
 
     // Vuelve al principio del archivo empacado para escribir la información de package_info
     fseek(package, 0, SEEK_SET);
     fwrite(&package_info, sizeof(struct PackageInfo), 1, package);
-    
+    for (int i = 0; i < contador_datos; i++) {
+        fwrite(&data_blocks[i],sizeof(struct Datos), 1, package);
+    }
     fclose(package);
 
     if(verbose_flag){
@@ -98,38 +104,43 @@ void crear(const char* package_name,  char** files, int file_count) {
     }
 }
 
-void recuperar_info(struct PackageInfo *empacado, const char* package_name){
-    // Abrir el archivo en modo lectura binaria
-    FILE *archivo = fopen(package_name, "rb");
+void recuperar_info(const char* package_name) {
+    // Abrir el archivo de paquete en modo lectura binaria
+    FILE* package = fopen(package_name, "rb");
 
-    if (archivo == NULL) {
-        perror("Error al abrir el archivo para lectura");
+    if (package == NULL) {
+        perror("No se pudo abrir el archivo de paquete");
         return;
     }
 
-    // Leer la estructura desde el archivo
-    size_t leidos = fread(empacado, sizeof(struct PackageInfo), 1, archivo);
+    // Leer la estructura PackageInfo desde el archivo
+    struct PackageInfo package_info;
+    size_t leidos = fread(&package_info, sizeof(struct PackageInfo), 1, package);
 
     if (leidos != 1) {
         perror("Error al leer el archivo");
-        fclose(archivo);
+        fclose(package);
         return;
     }
 
-    // Cerrar el archivo
-    fclose(archivo);
+    // Calcular la cantidad de bloques de datos (datablocks)
+    fseek(package, 0, SEEK_END);
+    long file_size = ftell(package);
+    size_t num_datablocks = (file_size - sizeof(struct PackageInfo)) / sizeof(struct Datos);
 
-    // Imprimir los datos leídos
-    printf("Tamaño de archivo: %lu\n", empacado->file_count);
+    // Vuelve al principio del archivo para leer los datablocks
+    fseek(package, sizeof(struct PackageInfo), SEEK_SET);
 
-    // Ahora, puedes acceder a los datos de struct File dentro de struct package_info
-    for (size_t i = 0; i < empacado->file_count; i++) {
-        printf("Nombre de archivo: %s\n", empacado->files[i].name);
-        printf("Tamaño: %lu\n", empacado->files[i].size);
-        printf("Inicio: %ld\n", empacado->files[i].start);
-        printf("Fin: %ld\n", empacado->files[i].end);
+    // Leer y mostrar el campo num_data de cada paquete de datos
+    for (size_t i = 0; i < num_datablocks; i++) {
+        struct Datos datablock;
+        fread(&datablock, sizeof(struct Datos), 1, package);
+        printf("Paquete de Datos %zu - num_data: %d\n", i, datablock.num_data);
     }
+
+    fclose(package);
 }
+
 
 void file(const char* package_name, char** files, int file_count){}
 
@@ -376,9 +387,10 @@ if (argc < 3) {
 
     // struct PackageInfo archivo;
 
-    // const char* nombre = "prueba5.jaja";
+    // const char* nombre = "prueba7.jaja";
 
-    // // listar(&archivo, nombre);
+    // listar(&archivo, nombre);
+    // recuperar_info( nombre);
 
     // // //extraer(&archivo, nombre);
 
