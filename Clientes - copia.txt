@@ -1,0 +1,46 @@
+6033;Armid Munoz
+6035;Hazel Jimenez
+6038;Mario Acuna
+6010;Johan Venegas
+6040;Carlos Alvarado
+6031;Joel Alvarado
+6007;Jeaustin Salazar
+6028;Gustavo Rodriguez 
+6002;Fernando Vargas
+6032;Sonia Mora
+6018;Elkin Diaz
+6017;Bernardo Posada
+6022;Alfredo Ocampo
+6014;John Duque
+6020;William Montero
+6042;Javier Ignacio
+6006;Oscar Camacho
+6027;Sebastian Mena
+6019;Geiner Loaiza
+6013;Alvaro Saborio
+6043;Ricardo Mora
+6034;Luis Guillermo Velez
+6021;Gabriel Jimenez
+6029;Natalie Jimenez
+6011;Julio Rodas
+6026;Victor Murillo
+6004;Luis Chavarria
+6041;Pablo Moreno
+6039;Esteban Fuentes
+6005;Alejandro Alzate
+6003;Alcides Salazar
+6001;Juan Espinoza
+6023;Sebastian Murillo
+6009;Alonso Vargas
+6008;Christian Venegas
+6024;Alejandro Hidalgo
+6012;Erika Fernandez
+6036;Jimena Navarro
+6037;Isaac Alpizar
+6030;Jose Zapata 
+6016;Sofia Varela
+6015;Horacio Moreno
+6025;Adolfo Correa
+6026;REPETIDO
+6027;REPETIDO
+6028;REPETIDO
